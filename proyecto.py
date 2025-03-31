@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import yfinance as yf
 import matplotlib.pyplot as plt
+import Funciones_MCF as MCF
 import scipy.stats as stats
 from scipy.stats import kurtosis, skew, shapiro ,norm
 from datetime import datetime
