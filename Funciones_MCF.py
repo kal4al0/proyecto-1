@@ -20,7 +20,7 @@ import numpy as np
  
 # Visualizacion de datos
 import matplotlib.pyplot as plt
-import matplotlib.pyplot
+import matplotlib.pyplot as plt
 # Api de Yahoo Finanzas
 import yfinance as yf
 
