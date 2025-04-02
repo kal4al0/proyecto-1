@@ -419,6 +419,17 @@ if stock_seleccionado:
                                         porcentaje_var_hist_99, porcentaje_cvar_hist_99]
     })
 
+
+    ## EJERCICIO F
+
+
+
+    df = yf.download('NVDA', start='2010-01-01')['Close']
+        returns = df.pct_change().dropna()
+        returns
+
+
+
     # Resetear el índice y eliminarlo
     resultados = resultados.reset_index(drop=True)
 
