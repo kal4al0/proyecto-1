@@ -432,8 +432,8 @@ if stock_seleccionado:
 
 
     df = yf.download('NVDA', start='2010-01-01')['Close']
-        returns = df.pct_change().dropna()
-        returns
+    returns = df.pct_change().dropna()
+    returns
 
     #EL EJERCICO NOS PIDE CALCULAR EL VaR EN FUNCION DEL CUANTIL CON SIGNIFICANCIA ALPHA Y UNA DESVIACIÓN ESTANDAR DE UNA VENTANA DE 252 RETORNOS
 
