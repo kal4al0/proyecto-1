@@ -440,9 +440,6 @@ if stock_seleccionado:
     returns = df.pct_change().dropna()
     returns
 
-    #EL EJERCICO NOS PIDE CALCULAR EL VaR EN FUNCION DEL CUANTIL CON SIGNIFICANCIA ALPHA Y UNA DESVIACIÓN ESTANDAR DE UNA VENTANA DE 252 RETORNOS
-
-
     rolling_std = returns.rolling(window=252).std()  #ESTE CODIGO CALCULA LA DESVIACIÓN ESTANDAR DE LA VENTANA DE 252 RETORNOS
 
     q_95 = norm.ppf(0.05)  #ESTE CODIGO CALCULA EL CUANTIL ALPHA=0.05 DE UNA NORMAL ESTANDAR (AQUI TENGO DUDA, NO SÉ SI ES VALIDO TOMAR LA NORMAL ESTANDAR,
@@ -451,73 +448,71 @@ if stock_seleccionado:
 
 
 #EN ESTOS CODIGOS SE CALCULAN LOS  VaR EN FUNCION DE LAS VENTANAS Y LOS CUANTILES AL 0.05 Y 0.01 CALCULADOS ARRIBA, RESPECTIVAMENTE.
-    VaR_95_volatil = q_95 * rolling_std
+    VaR_95_volatil = q_95 * rolling_std 
     VaR_99_volatil = q_99 * rolling_std
+    print(type(VaR_95_volatil))
     VaR_95_volatil_percent = (VaR_95_volatil * 100).round(4) #LOS VaR SE PASAN A PORCENTAJE
+
     VaR_99_volatil_percent = (VaR_99_volatil * 100).round(4)
     vaR_95_volatil_df = pd.DataFrame({'Date': returns.index, '95% VaR volatil': VaR_95_volatil_percent.squeeze()})
     vaR_95_volatil_df.set_index('Date', inplace=True)
+    print(type(vaR_95_volatil_df))
     vaR_99_volatil_df = pd.DataFrame({'Date': returns.index, '99% VaR volatil': VaR_99_volatil_percent.squeeze()})
     vaR_99_volatil_df.set_index('Date', inplace=True)
+    print(vaR_95_volatil_df.tail())  #VaR AL 95% EN FUNCIÓN DE LA VOLATILIDADprint(vaR_99_volatil_df.tail()) #VaR AL 99% EN FUNCIÓN DE LA VOLATILIDAD
     
     
 
 # Crear una figura
-    plt.figure(figsize=(14, 7))
+   plt.figure(figsize=(14, 7))
 
 # Graficar los retornos diarios
-    plt.plot(returns.index, returns * 100, label='Daily Returns (%)', color='blue', alpha=0.5)
+   plt.plot(returns.index, returns * 100, label='Daily Returns (%)', color='blue', alpha=0.5)
 
 # Graficar el VaR al 95% (ventana móvil con significancia 0.05)
-    plt.plot(vaR_95_volatil_df.index, vaR_95_volatil_df['95% VaR volatil'], label='95% VaR Volatil', color='red')
+   plt.plot(vaR_95_volatil_df.index, vaR_95_volatil_df['95% VaR volatil'], label='95% VaR Volatil', color='red')
 
 # Graficar el VaR al 99% (ventana móvil con significancia 0.01)
-    plt.plot(vaR_99_volatil_df.index, vaR_99_volatil_df['99% VaR volatil'], label='99% VaR Volatil', color='green')
+   plt.plot(vaR_99_volatil_df.index, vaR_99_volatil_df['99% VaR volatil'], label='99% VaR Volatil', color='green')
 
 # Agregar título y etiquetas a los ejes
-    plt.title('Retornos diarios Y Rolling VaR Volatil al 95% y 99%')
-    plt.xlabel('Fecha')
-    plt.ylabel('Retornos (%)')
+   plt.title('Retornos diarios Y Rolling VaR Volatil al 95% y 99%')
+   plt.xlabel('Fecha')
+   plt.ylabel('Retornos (%)')
 
 # Agregar una leyenda para diferenciar las series
-    plt.legend()
+   plt.legend()
 
 # Ajustar el layout para que no se solapen los elementos de la gráfica
-    plt.tight_layout()
+   plt.tight_layout()
 
 # Mostrar la gráfica
-    plt.show()
-    
-    
-    
-    #CALCULO DE LAS VIOLACIONES# Detectar violaciones:
-violations_95 = returns < VaR_95_volatil
-violations_99 = returns < VaR_99_volatil
+   plt.show()# Detectar violaciones:
+   violations_95 = returns < VaR_95_volatil
+   violations_99 = returns < VaR_99_volatil
 
 # Contar el número de violaciones
-violations_95_count = violations_95.sum()  # Número de violaciones al 95%
-violations_99_count = violations_99.sum()  # Número de violaciones al 99%
+   violations_95_count = violations_95.sum()  # Número de violaciones al 95%
+   violations_99_count = violations_99.sum()  # Número de violaciones al 99%
 
 # Verificamos si las variables son series y obtenemos su valor como número
-violations_95_count = violations_95_count.item() if isinstance(violations_95_count, pd.Series) else violations_95_count
-violations_99_count = violations_99_count.item() if isinstance(violations_99_count, pd.Series) else violations_99_count
+   violations_95_count = violations_95_count.item() if isinstance(violations_95_count, pd.Series) else violations_95_count
+   violations_99_count = violations_99_count.item() if isinstance(violations_99_count, pd.Series) else violations_99_count
 
 # Calcular el porcentaje de violaciones
-total_data_points = len(returns)  # Total de datos (observaciones)
+   total_data_points = len(returns)  # Total de datos (observaciones)
 
-violations_95_percentage = (violations_95_count / total_data_points) * 100
-violations_99_percentage = (violations_99_count / total_data_points) * 100
+   violations_95_percentage = (violations_95_count / total_data_points) * 100
+   violations_99_percentage = (violations_99_count / total_data_points) * 100
 
-results_df = pd.DataFrame({
+   results_df = pd.DataFrame({
     'Significancia Alpha': ['0.05', '0.01'],  # Las filas serán para los valores de alpha 0.05 y 0.01
     'Número de Violaciones': [violations_95_count, violations_99_count],  # Violaciones al 95% y 99%
     'Porcentaje de Violaciones': [f"{violations_95_percentage:.2f}%", f"{violations_99_percentage:.2f}%"]  # Porcentaje de violaciones con símbolo %
-})
+   })
+
 # Mostrar la tabla
-print(results_df)
-
-
-
+   print(results_df)
 
 st.write("De acuerdo con los resultados obtenidos en la gráfica y la tabla, en general, nuestras estimaciones son precisas. Sin embargo, se observa que las métricas de VaR histórico y paramétrico al 99% de confianza presentan un mayor margen de error. Esto podría explicarse por el hecho de que se está utilizando un modelo basado en una distribución normal, cuando en realidad los rendimientos podrían seguir una distribución con colas más pesadas, lo cual es típico en los mercados financieros.")
 
